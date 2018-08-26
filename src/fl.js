@@ -75,7 +75,7 @@ function onMousewheel(e)
 function onKeyUp(e)
 {
     pressed_keys[e.keyCode] = 0;
-    if(e.key === "g")
+    if(e.key === config.activate)
     {
         let style = window.getComputedStyle(canvas_fl),
             opacity = style.getPropertyValue('opacity');
@@ -167,7 +167,7 @@ function drawBackground(ctx)
 {
     ctx.globalCompositeOperation = 'source-over';
     ctx.clearRect( 0, 0, canvas_fl.width, canvas_fl.height);
-    ctx.fillStyle = '#666b';
+    ctx.fillStyle = config.bgColor;
     ctx.fillRect( 0, 0, canvas_fl.width, canvas_fl.height);
 }
 

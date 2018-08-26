@@ -90,6 +90,26 @@ let drawWebGL2 = function (gl)
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
+function hexToArray(hex)
+{
+    if(hex.startsWith("#"))
+    {
+        let val = parseInt(hex.substr(1),16);
+        let shift = 4;
+        if(hex.length >= 7)
+        {
+            shift = 8;
+        }
+        let and = (shift * shift) -1;
+        return[ ((val>>(shift*3))&and)/(and+1) ,
+            ((val>>(shift*2))&and)/(and+1),
+            ((val>>(shift))&and)/(and+1),
+            ((val&and)/(and+1))];
+    }
+    console.log("JS Flashlight: Invalid HEX String! " + hex);
+    return [0,0,0,0];
+}
+
 function initWebGL(canvas)
 {
     let gl = canvas.getContext("webgl2");
@@ -102,7 +122,10 @@ function initWebGL(canvas)
     draw = drawWebGL2;
     fl_data.size = 40;
     fl_type = 3;
-    gl.clearColor(0.375, 0.375, 0.375, 0.6875);
+
+    let color_array = hexToArray(config.bgColor);
+
+    gl.clearColor(color_array[0], color_array[1], color_array[2], color_array[3]);
     gl.clear(gl.COLOR_BUFFER_BIT);
     square = initSquareBuffer(gl);
 
@@ -114,10 +137,12 @@ function initWebGL(canvas)
     transformationMatrix.setCompleteScale(fl_data.size/200);
     transformationMatrix.translate(0,0,-1);
 
-    setUniformBGColor(gl,simpelShader, [0.375, 0.375, 0.375, 0.6875]);
-    setUniformBGColor(gl,realShader, [0.375, 0.375, 0.375, 0.6875]);
-    setUniformBGColor(gl,simpelRectShader, [0.375, 0.375, 0.375, 0.6875]);
-    setUniformBGColor(gl,realRectShader, [0.375, 0.375, 0.375, 0.6875]);
+
+
+    setUniformBGColor(gl,simpelShader, color_array);
+    setUniformBGColor(gl,realShader, color_array);
+    setUniformBGColor(gl,simpelRectShader, color_array);
+    setUniformBGColor(gl,realRectShader, color_array);
 
     perspectiveVector = new PerspectiveVector(canvas.clientWidth/canvas.clientHeight);
     setUniformPerspectiveVector(gl, getCurrentShader() , perspectiveVector.getVectorAsArray());
